@@ -135,6 +135,11 @@ h4 {
   padding: 0px;
   opacity: 0.6;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .buttons {
   width: 95%;
   margin: auto;
@@ -212,6 +217,44 @@ a {
   margin-top: 10px;
   transition: 0.5s;
 }
+.receipt {
+  width: 50%;
+  margin: 15px auto 65px;
+  text-align: center;
+  background-color: white;
+  padding: 15px 20px 20px;
+  display: none;
+}
+
+.receipt > h2 {
+  margin: 0px;
+}
+
+#items {
+  margin-top: 15px;
+  background-color: rgb(162, 155, 254);
+  border-radius: 20px;
+  padding: 15px;
+}
+#items > div {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+}
+/* #items > div:last-child {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+} */
+.line {
+  width: 80%;
+  margin: auto;
+  height: 1px;
+  border-bottom: 1px dashed rgb(255, 255, 255);
+}
+
 @media only screen and(max-width:1050px) {
   .opening {
     width: 75%;
