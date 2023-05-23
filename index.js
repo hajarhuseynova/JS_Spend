@@ -3,12 +3,14 @@ const card = document.querySelectorAll(".card");
 const receipt = document.querySelector(".receipt");
 const items = document.getElementById("items");
 const names = document.querySelectorAll(".card > h3");
+const sellButton = document.querySelectorAll(".buttons > button:first-child");
+const buyButton = document.querySelectorAll(".buttons > button:last-child");
+const countItem = document.querySelectorAll(".buttons > input");
+const price = document.querySelectorAll(".card>h4");
 
-const totalCount = Number(
-  totalAmount.textContent.replace("$", "").replaceAll(",", "")
-);
 var totalAll = 0;
 var countAddItemAll = 0;
+let totalMoneyAmount = 187000000000;
 
 //totaldiv
 let totalDiv = document.createElement("div");
@@ -21,30 +23,23 @@ totalValue.textContent = "$0.00";
 totalDiv.append(totalName, totalValue);
 
 for (let i = 0; i < card.length; i++) {
-  const sellButton = document.querySelectorAll(".buttons > button:first-child");
-  const buyButton = document.querySelectorAll(".buttons > button:last-child");
-  const countItem = document.querySelectorAll(".buttons > input");
-  const price = document.querySelectorAll(".card>h4");
-
   buyButton[i].addEventListener("click", () => {
-    countAddItemAll = ++countItem[i].value;
     receipt.style.display = "block";
+    const priceNum = parseFloat(
+      price[i].textContent.replace("$", "").replaceAll(",", "")
+    );
+    countAddItemAll = ++countItem[i].value;
     sellButton[i].style.backgroundColor = "red";
-    //gelen pul
-    priceNum = price[i].textContent.replace("$", "").replaceAll(",", "");
-    //saya gore pul
-    const totalItemPrice = priceNum * countAddItemAll;
-    totalAmount.textContent = totalCount - countAddItemAll * priceNum;
-    totalAll = Number(totalAmount.textContent);
+    const itemPrice = priceNum;
 
     //check
     const existingItemDiv = document.getElementById(`item-${i}`);
     if (existingItemDiv) {
       // Update existing item div
       const itemCount = existingItemDiv.querySelector(".item-count");
-      const itemPrice = existingItemDiv.querySelector(".item-price");
+      const itemPriceElement = existingItemDiv.querySelector(".item-price");
       itemCount.textContent = countAddItemAll;
-      itemPrice.textContent = totalItemPrice;
+      itemPriceElement.textContent = priceNum * countAddItemAll;
     } else {
       //itemdiv
       let itemDiv = document.createElement("div");
@@ -57,9 +52,9 @@ for (let i = 0; i < card.length; i++) {
       itemCount.textContent = countAddItemAll;
       itemCount.classList.add("item-count");
 
-      let itemPrice = document.createElement("h3");
-      itemPrice.textContent = priceNum * countAddItemAll;
-      itemPrice.classList.add("item-price");
+      let itemPriceElement = document.createElement("h3");
+      itemPriceElement.textContent = "$" + priceNum * countAddItemAll;
+      itemPriceElement.classList.add("item-price");
 
       // // line
       // let line = document.createElement("div");
@@ -68,29 +63,41 @@ for (let i = 0; i < card.length; i++) {
       // line.style.height = "1px";
       // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
       //append
-      itemDiv.append(itemName, itemCount, itemPrice);
+      itemDiv.append(itemName, itemCount, itemPriceElement);
       items.appendChild(itemDiv);
       items.append(totalDiv);
     }
+    const totalCount = parseFloat(
+      totalAmount.textContent.replace("$", "").replaceAll(",", "")
+    );
     //update
-    totalValue.textContent = "$" + totalItemPrice;
+    totalAll += itemPrice;
+    totalAmount.textContent = "$" + (totalCount - itemPrice);
+    totalValue.textContent = "$" + totalAll;
   });
 
   sellButton[i].addEventListener("click", () => {
     if (countItem[i].value > 0) {
       let countRemoveItemAll = --countItem[i].value;
-      const totalItemPrice = priceNum * countRemoveItemAll;
-      hasil = countAddItemAll - countRemoveItemAll;
-      totalAmount.textContent = totalAll + hasil * priceNum;
-
+      const priceNum = parseFloat(
+        price[i].textContent.replace("$", "").replaceAll(",", "")
+      );
+      const itemPrice = priceNum * countRemoveItemAll;
+      totalAll -= priceNum;
+      totalAmount.textContent =
+        "$" +
+        (parseFloat(
+          totalAmount.textContent.replace("$", "").replaceAll(",", "")
+        ) +
+          priceNum);
       //check
       const existingItemDiv = document.getElementById(`item-${i}`);
       if (existingItemDiv) {
         // Update
         const itemCount = existingItemDiv.querySelector(".item-count");
-        const itemPrice = existingItemDiv.querySelector(".item-price");
+        const itemPriceElement = existingItemDiv.querySelector(".item-price");
         itemCount.textContent = countRemoveItemAll;
-        itemPrice.textContent = totalItemPrice;
+        itemPriceElement.textContent = itemPrice;
         // Remove item div if count becomes 0
         if (countRemoveItemAll === 0) {
           existingItemDiv.remove();
@@ -101,12 +108,6 @@ for (let i = 0; i < card.length; i++) {
       sellButton[i].style.backgroundColor = "rgb(220, 220, 220)";
     }
     // Update total div
-    totalValue.textContent = "$";
+    totalValue.textContent = "$" + totalAll;
   });
 }
-
-// if (receipt.children.length >= 2) {
-//   receipt.style.display = "block";
-// } else {
-//   receipt.style.display = "none";
-// }
