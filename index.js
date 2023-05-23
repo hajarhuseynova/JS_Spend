@@ -1,15 +1,12 @@
 const totalAmount = document.getElementById("totalAmount");
-const sellButton = document.querySelectorAll(".buttons > button:first-child");
-const buyButton = document.querySelectorAll(".buttons > button:last-child");
-const countItem = document.querySelectorAll(".buttons > input");
-const price = document.querySelectorAll(".card>h4");
 const card = document.querySelectorAll(".card");
 const receipt = document.querySelector(".receipt");
 const items = document.getElementById("items");
 const names = document.querySelectorAll(".card > h3");
 
-const total = totalAmount.textContent.replace("$", "").replaceAll(",", "");
-const totalCount = Number(total);
+const totalCount = Number(
+  totalAmount.textContent.replace("$", "").replaceAll(",", "")
+);
 var totalAll = 0;
 var countAddItemAll = 0;
 
@@ -24,13 +21,17 @@ totalValue.textContent = "$0.00";
 totalDiv.append(totalName, totalValue);
 
 for (let i = 0; i < card.length; i++) {
+  const sellButton = document.querySelectorAll(".buttons > button:first-child");
+  const buyButton = document.querySelectorAll(".buttons > button:last-child");
+  const countItem = document.querySelectorAll(".buttons > input");
+  const price = document.querySelectorAll(".card>h4");
+
   buyButton[i].addEventListener("click", () => {
+    countAddItemAll = ++countItem[i].value;
     receipt.style.display = "block";
+    sellButton[i].style.backgroundColor = "red";
     //gelen pul
     priceNum = price[i].textContent.replace("$", "").replaceAll(",", "");
-    //gelen say
-    countAddItemAll = ++countItem[i].value;
-    sellButton[i].style.backgroundColor = "red";
     //saya gore pul
     const totalItemPrice = priceNum * countAddItemAll;
     totalAmount.textContent = totalCount - countAddItemAll * priceNum;
@@ -60,16 +61,16 @@ for (let i = 0; i < card.length; i++) {
       itemPrice.textContent = priceNum * countAddItemAll;
       itemPrice.classList.add("item-price");
 
-      // line
-      let line = document.createElement("div");
-      line.style.width = "80%";
-      line.style.margin = "auto";
-      line.style.height = "1px";
-      line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
+      // // line
+      // let line = document.createElement("div");
+      // line.style.width = "80%";
+      // line.style.margin = "auto";
+      // line.style.height = "1px";
+      // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
       //append
       itemDiv.append(itemName, itemCount, itemPrice);
       items.appendChild(itemDiv);
-      items.append(line, totalDiv);
+      items.append(totalDiv);
     }
     //update
     totalValue.textContent = "$" + totalItemPrice;
@@ -103,3 +104,9 @@ for (let i = 0; i < card.length; i++) {
     totalValue.textContent = "$";
   });
 }
+
+// if (receipt.children.length >= 2) {
+//   receipt.style.display = "block";
+// } else {
+//   receipt.style.display = "none";
+// }

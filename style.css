@@ -239,15 +239,26 @@ a {
 #items > div {
   width: 80%;
   margin: auto;
-  display: flex;
-  justify-content: space-between;
 }
-/* #items > div:last-child {
-  width: 80%;
-  margin: auto;
+#items > div > h3 {
+  width: 30%;
+  color: white;
+  display: inline-block;
+}
+#items > div > h3:first-child {
+  text-align: left;
+}
+#items > div > h3:nth-child(2) {
+  text-align: center;
+}
+#items > div > h3:last-child {
+  text-align: right;
+}
+#totalDiv {
   display: flex;
   justify-content: space-around;
-} */
+}
+
 .line {
   width: 80%;
   margin: auto;
