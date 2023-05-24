@@ -83,28 +83,31 @@ for (let i = 0; i < card.length; i++) {
       itemPriceElement.textContent = "$" + comma(priceNum * countAddItemAll);
       itemPriceElement.classList.add("item-price");
 
-      // line
-      let line = document.createElement("div");
-      line.style.width = "80%";
-      line.style.margin = "auto";
-      line.style.height = "1px";
-      line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
+      // // line
+      // let line = document.createElement("div");
+      // line.style.width = "80%";
+      // line.style.margin = "auto";
+      // line.style.height = "1px";
+      // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
+      if (items.children.length < 0) {
+        items.parentElement.style.display = "none";
+      } else {
+        items.parentElement.style.display = "block";
+      }
       //append
       itemDiv.append(itemName, itemCount, itemPriceElement);
       items.appendChild(itemDiv);
-      items.append(line, totalDiv);
+      items.append(totalDiv);
     }
   }
   buyButton[i].addEventListener("click", () => {
     buyButton[i].disabled = false;
-    receipt.style.display = "block";
     const priceNum = parseFloat(
       price[i].textContent.replace("$", "").replaceAll(",", "")
     );
     countAddItemAll = ++countItem[i].value;
     sellButton[i].style.backgroundColor = "red";
     const itemPrice = priceNum;
-
     //check
     createReceipt();
     const totalCount = parseFloat(
