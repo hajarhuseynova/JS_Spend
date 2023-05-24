@@ -27,7 +27,6 @@ for (let i = 0; i < card.length; i++) {
     const priceNum = parseFloat(
       price[i].textContent.replace("$", "").replaceAll(",", "")
     );
-
     let totalCount = parseFloat(
       totalAmount.textContent.replace("$", "").replaceAll(",", "")
     );
@@ -46,12 +45,23 @@ for (let i = 0; i < card.length; i++) {
     totalAll += countItem[i].value * priceNum;
     value = countItem[i].value * priceNum;
     totalAmount.textContent = "$" + comma(totalCount);
+    console.log(totalAll);
     totalValue.textContent = "$" + comma(totalAll);
     createReceipt();
   });
   countItem[i].addEventListener("keydown", (e) => {
     if (e.which === 38 || e.which === 40) {
       e.preventDefault();
+    }
+  });
+  countItem[i].addEventListener("focus", () => {
+    if (countItem[i].value == 0) {
+      countItem[i].value = "";
+    }
+  });
+  countItem[i].addEventListener("blur", () => {
+    if (countItem[i].value == "") {
+      countItem[i].value = 0;
     }
   });
 }
@@ -89,10 +99,14 @@ for (let i = 0; i < card.length; i++) {
       // line.style.margin = "auto";
       // line.style.height = "1px";
       // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
-      if (items.children.length < 0) {
+
+      if (!itemDiv && !totalDiv) {
         items.parentElement.style.display = "none";
       } else {
         items.parentElement.style.display = "block";
+      }
+      if (items.children.length == 1) {
+        receipt.remove();
       }
       //append
       itemDiv.append(itemName, itemCount, itemPriceElement);
@@ -108,13 +122,20 @@ for (let i = 0; i < card.length; i++) {
     countAddItemAll = ++countItem[i].value;
     sellButton[i].style.backgroundColor = "red";
     const itemPrice = priceNum;
+
     //check
     createReceipt();
     const totalCount = parseFloat(
       totalAmount.textContent.replace("$", "").replaceAll(",", "")
     );
+
     //update
     totalAll += itemPrice;
+    console.log(totalCount - priceNum);
+    console.log(priceNum);
+    if (totalCount - priceNum < priceNum[i]) {
+      buyButton[i].disabled = true;
+    }
     totalAmount.textContent = "$" + comma(totalCount - itemPrice);
     totalValue.textContent = "$" + comma(totalAll);
   });
