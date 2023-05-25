@@ -20,17 +20,14 @@ let totalValue = document.createElement("h3");
 totalDiv.append(totalName, totalValue);
 
 for (let i = 0; i < card.length; i++) {
-  buyButton[i].disabled = false;
-  let value = 0;
   countItem[i].addEventListener("change", () => {
-    buyButton[i].style.backgroundColor = "rgb(162, 155, 254)";
     const priceNum = parseFloat(
       price[i].textContent.replace("$", "").replaceAll(",", "")
     );
     let totalCount = parseFloat(
       totalAmount.textContent.replace("$", "").replaceAll(",", "")
     );
-    totalCount += value;
+
     if (totalCount < countItem[i].value * priceNum) {
       countItem[i].value = Math.trunc(totalCount / priceNum);
       buyButton[i].style.backgroundColor = "rgb(220,220,220)";
@@ -40,14 +37,16 @@ for (let i = 0; i < card.length; i++) {
       sellButton[i].style.backgroundColor = "red";
     }
     countAddItemAll = countItem[i].value;
-    totalCount -= countItem[i].value * priceNum;
-    totalAll = 0;
-    totalAll += countItem[i].value * priceNum;
-    value = countItem[i].value * priceNum;
+    if (countAddItemAll != 0) {
+      totalCount -= countItem[i].value * priceNum;
+      totalAll = 0;
+      totalAll += countItem[i].value * priceNum;
+      createReceipt(i);
+    }
     totalAmount.textContent = "$" + comma(totalCount);
-    console.log(totalAll);
     totalValue.textContent = "$" + comma(totalAll);
-    createReceipt();
+
+    CheckBuyButtons();
   });
   countItem[i].addEventListener("keydown", (e) => {
     if (e.which === 38 || e.which === 40) {
@@ -65,79 +64,98 @@ for (let i = 0; i < card.length; i++) {
     }
   });
 }
-for (let i = 0; i < card.length; i++) {
-  function createReceipt() {
-    const existingItemDiv = document.getElementById(`item-${i}`);
+
+function createReceipt(i) {
+  const existingItemDiv = document.getElementById(`item-${i}`);
+  const priceNum = parseFloat(
+    price[i].textContent.replace("$", "").replaceAll(",", "")
+  );
+  if (existingItemDiv) {
+    // Update existing item div
+    const itemCount = existingItemDiv.querySelector(".item-count");
+    const itemPriceElement = existingItemDiv.querySelector(".item-price");
+    itemCount.textContent = countAddItemAll;
+    itemPriceElement.textContent = "$" + comma(priceNum * countAddItemAll);
+  } else {
+    //itemdiv
+    let itemDiv = document.createElement("div");
+    itemDiv.id = `item-${i}`;
+
+    let itemName = document.createElement("h3");
+    itemName.textContent = names[i].textContent;
+
+    let itemCount = document.createElement("h3");
+    itemCount.textContent = countAddItemAll;
+    itemCount.classList.add("item-count");
+
+    let itemPriceElement = document.createElement("h3");
+    itemPriceElement.textContent = "$" + comma(priceNum * countAddItemAll);
+    itemPriceElement.classList.add("item-price");
+
+    // // line
+    // let line = document.createElement("div");
+    // line.style.width = "80%";
+    // line.style.margin = "auto";
+    // line.style.height = "1px";
+    // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
+
+    if (!itemDiv && !totalDiv) {
+      items.parentElement.style.display = "none";
+    } else {
+      items.parentElement.style.display = "block";
+    }
+    if (items.children.length == 1) {
+      receipt.remove();
+    }
+    //append
+    itemDiv.append(itemName, itemCount, itemPriceElement);
+    items.appendChild(itemDiv);
+    items.append(totalDiv);
+  }
+}
+
+function CheckBuyButtons() {
+  const totalCount = parseFloat(
+    totalAmount.textContent.replace("$", "").replaceAll(",", "")
+  );
+  for (let i = 0; i < card.length; i++) {
     const priceNum = parseFloat(
       price[i].textContent.replace("$", "").replaceAll(",", "")
     );
-    if (existingItemDiv) {
-      // Update existing item div
-      const itemCount = existingItemDiv.querySelector(".item-count");
-      const itemPriceElement = existingItemDiv.querySelector(".item-price");
-      itemCount.textContent = countAddItemAll;
-      itemPriceElement.textContent = "$" + comma(priceNum * countAddItemAll);
+
+    if (totalCount - priceNum < 0) {
+      buyButton[i].disabled = true;
+      buyButton[i].style.backgroundColor = "rgb(220,220,220)";
     } else {
-      //itemdiv
-      let itemDiv = document.createElement("div");
-      itemDiv.id = `item-${i}`;
-
-      let itemName = document.createElement("h3");
-      itemName.textContent = names[i].textContent;
-
-      let itemCount = document.createElement("h3");
-      itemCount.textContent = countAddItemAll;
-      itemCount.classList.add("item-count");
-
-      let itemPriceElement = document.createElement("h3");
-      itemPriceElement.textContent = "$" + comma(priceNum * countAddItemAll);
-      itemPriceElement.classList.add("item-price");
-
-      // // line
-      // let line = document.createElement("div");
-      // line.style.width = "80%";
-      // line.style.margin = "auto";
-      // line.style.height = "1px";
-      // line.style.borderBottom = "1px dashed rgb(255, 255, 255)";
-
-      if (!itemDiv && !totalDiv) {
-        items.parentElement.style.display = "none";
-      } else {
-        items.parentElement.style.display = "block";
-      }
-      if (items.children.length == 1) {
-        receipt.remove();
-      }
-      //append
-      itemDiv.append(itemName, itemCount, itemPriceElement);
-      items.appendChild(itemDiv);
-      items.append(totalDiv);
+      buyButton[i].disabled = false;
+      buyButton[i].style.backgroundColor = "rgb(162, 155, 254)";
     }
   }
+}
+
+for (let i = 0; i < card.length; i++) {
   buyButton[i].addEventListener("click", () => {
     buyButton[i].disabled = false;
+
     const priceNum = parseFloat(
       price[i].textContent.replace("$", "").replaceAll(",", "")
     );
+
     countAddItemAll = ++countItem[i].value;
     sellButton[i].style.backgroundColor = "red";
-    const itemPrice = priceNum;
 
     //check
-    createReceipt();
     const totalCount = parseFloat(
       totalAmount.textContent.replace("$", "").replaceAll(",", "")
     );
 
     //update
-    totalAll += itemPrice;
-    console.log(totalCount - priceNum);
-    console.log(priceNum);
-    if (totalCount - priceNum < priceNum[i]) {
-      buyButton[i].disabled = true;
-    }
-    totalAmount.textContent = "$" + comma(totalCount - itemPrice);
+    totalAll += priceNum;
+
+    totalAmount.textContent = "$" + comma(totalCount - priceNum);
     totalValue.textContent = "$" + comma(totalAll);
+    CheckBuyButtons();
+    createReceipt(i);
   });
   sellButton[i].addEventListener("click", () => {
     buyButton[i].disabled = false;
@@ -176,6 +194,7 @@ for (let i = 0; i < card.length; i++) {
     }
     // Update total div
     totalValue.textContent = "$" + comma(totalAll);
+    CheckBuyButtons();
   });
 }
 function comma(number) {
